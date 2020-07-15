@@ -33,6 +33,31 @@ function calculateWinner(squares) {
 	return null;
 }
 
+function calculateLocation(i) {
+	switch (i) {
+		case 0:
+			return [0, 0];
+		case 1:
+			return [0, 1];
+		case 2:
+			return [0, 2];
+		case 3:
+			return [1, 0];
+		case 4:
+			return [1, 1];
+		case 5:
+			return [1, 2];
+		case 6:
+			return [2, 0];
+		case 7:
+			return [2, 1];
+		case 8:
+			return [2, 2];
+		default:
+			return;
+	}
+}
+
 class Board extends React.Component {
 	renderSquare(i) {
 		return (
@@ -71,7 +96,10 @@ class Game extends React.Component {
 		super(props);
 		this.state = {
 			history: [
-				{ squares: Array(9).fill(null) }
+				{
+					squares: Array(9).fill(null),
+					move: null,
+				}
 			],
 			xIsNext: true,
 			stepNumber: 0,
@@ -95,13 +123,22 @@ class Game extends React.Component {
 			return;
 		}
 		squares[i] = this.state.xIsNext ? 'X' : 'O';
+
+		const move = `${squares[i]} at ${calculateLocation(i)}`;
+
 		this.setState({
-			history: history.concat([{
-				squares: squares,
-			}]),
+			history: history.concat(
+				[{
+					squares: squares,
+					move: move,
+				}]
+			),
 			xIsNext: !this.state.xIsNext,
 			stepNumber: history.length,
 		});
+		console.log(this.state.history);
+		console.log(this.state.stepNumber);
+		console.log(move);
 	}
 
 	restartGame() {
@@ -125,7 +162,9 @@ class Game extends React.Component {
 			return (
 				<li key={move}>
 					<button onClick={() => this.jumpTo(move)}>{desc}</button>
+					<div>{step.move}</div>
 				</li>
+
 			);
 		});
 
@@ -147,7 +186,7 @@ class Game extends React.Component {
 					<button onClick={this.restartGame}>Restart Game</button>
 				</div>
 				<div className="game-info">
-					
+
 					<div>{status}</div>
 					<ol>{moves}</ol>
 				</div>
